@@ -157,6 +157,61 @@ export const LocalStore = {
       });
     }
 
+    // Calculate Last 4 Weeks
+    const activity_4_weeks: DailyActivityStat[] = [];
+    for (let i = 3; i >= 0; i--) {
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() - i * 7);
+      
+      const startDate = new Date(endDate);
+      startDate.setDate(startDate.getDate() - 6);
+
+      const weekLogs = logs.filter(l => {
+        try {
+          const logDate = new Date(l.completed_at);
+          // Zero out time for start date
+          startDate.setHours(0,0,0,0);
+          // Set end date to end of day
+          endDate.setHours(23,59,59,999);
+          return logDate >= startDate && logDate <= endDate;
+        } catch { return false; }
+      });
+
+      let label = i === 0 ? 'This Wk' : i === 1 ? 'Last Wk' : `${i} Wks Ago`;
+      activity_4_weeks.push({
+        date: startDate.toISOString().split('T')[0],
+        day_label: label,
+        minutes: Math.round(weekLogs.reduce((acc, l) => acc + l.duration_seconds, 0) / 60),
+        calories: Math.round(weekLogs.reduce((acc, l) => acc + l.calories_burned, 0)),
+        workout_count: weekLogs.length
+      });
+    }
+
+    // Calculate Last 12 Months
+    const activity_12_months: DailyActivityStat[] = [];
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const month = d.getMonth();
+      const year = d.getFullYear();
+
+      const monthLogs = logs.filter(l => {
+        try {
+          const logDate = new Date(l.completed_at);
+          return logDate.getMonth() === month && logDate.getFullYear() === year;
+        } catch { return false; }
+      });
+
+      activity_12_months.push({
+        date: `${year}-${month + 1}`,
+        day_label: monthNames[month],
+        minutes: Math.round(monthLogs.reduce((acc, l) => acc + l.duration_seconds, 0) / 60),
+        calories: Math.round(monthLogs.reduce((acc, l) => acc + l.calories_burned, 0)),
+        workout_count: monthLogs.length
+      });
+    }
+
     // Category breakdown
     const catMap: Record<string, { count: number; calories: number; name: string; color: string }> = {};
 
@@ -197,6 +252,8 @@ export const LocalStore = {
       total_active_minutes: Math.round((profile.total_active_seconds || 0) / 60),
       total_calories_burned: profile.total_calories_burned || 0,
       weekly_activity: weeklyActivity,
+      activity_4_weeks: activity_4_weeks,
+      activity_12_months: activity_12_months,
       category_distribution: category_distribution,
       recent_logs: logs.slice(0, 10),
     };

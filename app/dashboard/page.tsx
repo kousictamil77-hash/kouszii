@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { DashboardStats, UserProfile } from '@/lib/types';
 import { LocalStore } from '@/lib/storage';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 import { calculateSDG3Metrics, calculateBMI } from '@/lib/calculations';
 import { StatsCard } from '@/components/StatsCard';
 import { ActivityBarChart } from '@/components/Charts/ActivityBarChart';
@@ -37,7 +38,29 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
+    const syncProfileWithSupabase = async () => {
+      if (isSupabaseConfigured()) {
+        const supabase = createClient();
+        if (supabase) {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const currentProfile = LocalStore.getProfile();
+            const email = user.email || currentProfile.email;
+            const full_name = user.user_metadata?.full_name || email?.split('@')[0] || currentProfile.full_name;
+            
+            // Only update if there's a mismatch to avoid unnecessary writes
+            if (currentProfile.full_name !== full_name || currentProfile.email !== email) {
+              const updatedProfile = { ...currentProfile, email, full_name };
+              LocalStore.saveProfile(updatedProfile);
+              setProfile(updatedProfile);
+            }
+          }
+        }
+      }
+    };
+    
     reloadData();
+    syncProfileWithSupabase();
   }, []);
 
   const handleDeleteLog = async (id: string) => {
@@ -139,7 +162,11 @@ export default function DashboardPage() {
         
         {/* 7-Day Activity Chart */}
         <div className="lg:col-span-7 rounded-3xl glass-panel border border-slate-800 p-6 space-y-4">
-          <ActivityBarChart data={stats.weekly_activity} />
+          <ActivityBarChart 
+            data7Days={stats.weekly_activity} 
+            data4Weeks={stats.activity_4_weeks} 
+            data12Months={stats.activity_12_months} 
+          />
         </div>
 
         {/* Category & Muscle Distribution Chart */}

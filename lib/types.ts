@@ -14,6 +14,9 @@ export interface UserProfile {
   avatar_url?: string | null;
   weight_kg: number;
   height_cm: number;
+  age?: number;
+  gender?: 'male' | 'female' | 'other';
+  daily_calorie_goal?: number;
   fitness_level: FitnessDifficulty;
   daily_goal_minutes: number;
   current_streak: number;
@@ -102,6 +105,8 @@ export interface DashboardStats {
   total_active_minutes: number;
   total_calories_burned: number;
   weekly_activity: DailyActivityStat[];
+  activity_4_weeks: DailyActivityStat[];
+  activity_12_months: DailyActivityStat[];
   category_distribution: CategoryBreakdownStat[];
   recent_logs: ProgressLog[];
 }

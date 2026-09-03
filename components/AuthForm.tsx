@@ -51,8 +51,23 @@ export function AuthForm({ mode }: AuthFormProps) {
             return;
           }
 
+          import('@/lib/storage').then(({ LocalStore }) => {
+            const profile = LocalStore.getProfile();
+            LocalStore.saveProfile({
+              ...profile,
+              email: email,
+              full_name: fullName || email.split('@')[0],
+              total_workouts: 0,
+              total_calories_burned: 0,
+              total_active_seconds: 0,
+              current_streak: 0,
+              last_workout_date: null,
+            });
+            localStorage.setItem('hw_smart_fitness_logs_v1', JSON.stringify([]));
+          });
+
           if (data.session) {
-            router.push('/dashboard');
+            router.push('/onboarding');
           } else {
             setSuccessMsg('Account created! Please check your email for confirmation or sign in.');
             setLoading(false);
@@ -60,7 +75,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           return;
         } else {
           // Login
-          const { error } = await supabase.auth.signInWithPassword({
+          const { error, data } = await supabase.auth.signInWithPassword({
             email,
             password,
           });
@@ -71,6 +86,15 @@ export function AuthForm({ mode }: AuthFormProps) {
             return;
           }
 
+          import('@/lib/storage').then(({ LocalStore }) => {
+            const profile = LocalStore.getProfile();
+            LocalStore.saveProfile({
+              ...profile,
+              email: data.user?.email || email,
+              full_name: data.user?.user_metadata?.full_name || email.split('@')[0],
+            });
+          });
+
           router.push('/dashboard');
           return;
         }
@@ -79,8 +103,44 @@ export function AuthForm({ mode }: AuthFormProps) {
 
     // Demo Mode fallback
     setTimeout(() => {
-      setLoading(false);
-      router.push('/dashboard');
+      import('@/lib/storage').then(({ LocalStore }) => {
+        const profile = LocalStore.getProfile();
+        
+        // Mock a simple database in localStorage to remember names across signouts
+        const usersDB = JSON.parse(localStorage.getItem('hw_users_db_v1') || '{}');
+        if (mode === 'signup') {
+          usersDB[email] = { full_name: fullName || email.split('@')[0] };
+          localStorage.setItem('hw_users_db_v1', JSON.stringify(usersDB));
+        }
+        
+        const storedName = usersDB[email]?.full_name;
+        
+        const updatedName = mode === 'signup' 
+          ? (fullName || email.split('@')[0]) 
+          : (storedName || email.split('@')[0]);
+        
+        if (mode === 'signup') {
+          LocalStore.saveProfile({
+            ...profile,
+            email: email,
+            full_name: updatedName,
+            total_workouts: 0,
+            total_calories_burned: 0,
+            total_active_seconds: 0,
+            current_streak: 0,
+            last_workout_date: null,
+          });
+          localStorage.setItem('hw_smart_fitness_logs_v1', JSON.stringify([]));
+        } else {
+          LocalStore.saveProfile({
+            ...profile,
+            email: email,
+            full_name: updatedName,
+          });
+        }
+        setLoading(false);
+        router.push(mode === 'signup' ? '/onboarding' : '/dashboard');
+      });
     }, 600);
   };
 

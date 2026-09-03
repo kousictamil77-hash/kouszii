@@ -13,31 +13,68 @@ import {
   X, 
   PlusCircle,
   User,
-  Sparkles
+  Sparkles,
+  LogOut,
+  ShieldAlert
 } from 'lucide-react';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 
 export function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
     if (isSupabaseConfigured()) {
       const supabase = createClient();
       if (supabase) {
         supabase.auth.getUser().then(({ data: { user } }) => {
-          if (user?.email) setUserEmail(user.email);
+          if (user?.user_metadata?.full_name) {
+            setUserName(user.user_metadata.full_name);
+          } else if (user?.email) {
+            setUserName(user.email.split('@')[0]);
+          }
         });
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-          setUserEmail(session?.user?.email || null);
+          if (session?.user?.user_metadata?.full_name) {
+            setUserName(session.user.user_metadata.full_name);
+          } else if (session?.user?.email) {
+            setUserName(session.user.email.split('@')[0]);
+          } else {
+            setUserName(null);
+          }
         });
 
         return () => subscription.unsubscribe();
       }
+    } else {
+      import('@/lib/storage').then(({ LocalStore }) => {
+        const profile = LocalStore.getProfile();
+        if (profile?.full_name) {
+          setUserName(profile.full_name);
+        } else if (profile?.email) {
+          setUserName(profile.email.split('@')[0]);
+        }
+      });
     }
   }, []);
+
+  const handleSignOut = async () => {
+    if (isSupabaseConfigured()) {
+      const supabase = createClient();
+      if (supabase) {
+        await supabase.auth.signOut();
+        setUserName(null);
+        window.location.href = '/auth/login';
+      }
+    } else {
+      localStorage.removeItem('hw_smart_fitness_profile_v1');
+      localStorage.removeItem('hw_smart_fitness_logs_v1');
+      setUserName(null);
+      window.location.href = '/auth/login';
+    }
+  };
 
   const navLinks = [
     { href: '/', label: 'Overview', icon: Sparkles },
@@ -45,6 +82,7 @@ export function Navbar() {
     { href: '/tracker', label: 'Workout Tracker', icon: Activity },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/sdg3', label: 'SDG 3 Impact', icon: HeartHandshake },
+    { href: '/admin', label: 'Admin', icon: ShieldAlert },
   ];
 
   const isActive = (path: string) => {
@@ -104,16 +142,25 @@ export function Navbar() {
             Start Workout
           </Link>
 
-          {userEmail ? (
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 bg-slate-800/80 border border-slate-700 hover:border-emerald-500/40 transition-colors"
-            >
-              <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold">
-                {userEmail[0].toUpperCase()}
-              </div>
-              <span className="max-w-[120px] truncate">{userEmail}</span>
-            </Link>
+          {userName ? (
+            <div className="flex items-center gap-2">
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 bg-slate-800/80 border border-slate-700 hover:border-emerald-500/40 transition-colors"
+              >
+                <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold">
+                  {userName[0].toUpperCase()}
+                </div>
+                <span className="max-w-[120px] truncate">{userName}</span>
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                title="Sign Out"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
           ) : (
             <Link
               href="/auth/login"
@@ -176,7 +223,18 @@ export function Navbar() {
               Launch Active Workout
             </Link>
 
-            {!userEmail && (
+            {userName ? (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleSignOut();
+                }}
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm text-rose-400 bg-rose-500/10 border border-rose-500/20 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </button>
+            ) : (
               <Link
                 href="/auth/login"
                 onClick={() => setMobileMenuOpen(false)}
