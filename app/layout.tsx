@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import { ChatWidget } from '@/components/ChatWidget';
+import { ChatBot } from '@/components/ChatBot';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -39,7 +39,7 @@ export default function RootLayout({
         <Navbar />
         <main className="flex-1 w-full">{children}</main>
         <Footer />
-        <ChatWidget />
+        <ChatBot />
       </body>
     </html>
   );

@@ -10,7 +10,7 @@ interface Message {
   content: string;
 }
 
-export const ChatWidget = () => {
+export const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
