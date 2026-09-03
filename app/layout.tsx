@@ -1,7 +1,13 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { ChatWidget } from '@/components/ChatWidget';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   title: 'Home Workout – Smart Fitness Management System | SDG 3',
@@ -20,7 +26,6 @@ export const metadata: Metadata = {
     'Planks',
   ],
   authors: [{ name: 'FitPulse SDG 3 Team' }],
-  viewport: 'width=device-width, initial-scale=1',
 };
 
 export default function RootLayout({
@@ -34,6 +39,7 @@ export default function RootLayout({
         <Navbar />
         <main className="flex-1 w-full">{children}</main>
         <Footer />
+        <ChatWidget />
       </body>
     </html>
   );
