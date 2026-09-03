@@ -215,14 +215,26 @@ export function ActiveWorkoutSession({
           </div>
         </div>
 
-        {/* Workout Heading */}
-        <div className="text-center space-y-1">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-heading">
-            {exercise.name}
-          </h2>
-          <p className="text-xs text-slate-400">
-            Set {currentSet} of {totalSets} • Target: {completedReps} reps
-          </p>
+        {/* Workout Heading with Exercise Image Preview */}
+        <div className="flex items-center gap-4 p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
+          {exercise.image_url && (
+            <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-emerald-500/30">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={exercise.image_url}
+                alt={exercise.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+          <div className="space-y-0.5">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-white font-heading">
+              {exercise.name}
+            </h2>
+            <p className="text-xs text-slate-400">
+              Set {currentSet} of {totalSets} • Target: <span className="text-emerald-400 font-bold">{completedReps} reps</span>
+            </p>
+          </div>
         </div>
 
         {!isFinished ? (

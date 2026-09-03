@@ -73,6 +73,7 @@ export const INITIAL_EXERCISES: Exercise[] = [
       'Exhale as you push up, inhale as you descend.'
     ],
     calories_per_minute_est: 7.2,
+    image_url: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&auto=format&fit=crop&q=80',
     sdg_alignment_note: 'Promotes upper body musculoskeletal strength without gym equipment (SDG 3.4).'
   },
   {
@@ -98,6 +99,7 @@ export const INITIAL_EXERCISES: Exercise[] = [
       'Elevate your feet on a step for added resistance as you progress.'
     ],
     calories_per_minute_est: 7.8,
+    image_url: 'https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=800&auto=format&fit=crop&q=80',
     sdg_alignment_note: 'Builds functional overhead mobility and joint resilience.'
   },
   {
@@ -122,6 +124,7 @@ export const INITIAL_EXERCISES: Exercise[] = [
       'Keep elbows tucked close to your torso.'
     ],
     calories_per_minute_est: 8.4,
+    image_url: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&auto=format&fit=crop&q=80',
     sdg_alignment_note: 'Enhances forearm, tricep, and core stabilization.'
   },
   {
@@ -146,6 +149,7 @@ export const INITIAL_EXERCISES: Exercise[] = [
       'Tuck your pelvis slightly to activate lower abdominals.'
     ],
     calories_per_minute_est: 5.2,
+    image_url: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?w=800&auto=format&fit=crop&q=80',
     sdg_alignment_note: 'Prevents chronic lower back pain and improves sedentary posture.'
   },
   {
@@ -171,6 +175,7 @@ export const INITIAL_EXERCISES: Exercise[] = [
       'Slow and controlled reps maximize muscle tension over fast jerky movements.'
     ],
     calories_per_minute_est: 7.0,
+    image_url: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&auto=format&fit=crop&q=80',
     sdg_alignment_note: 'Enhances rotational torque and spinal mobility.'
   },
   {
@@ -195,6 +200,7 @@ export const INITIAL_EXERCISES: Exercise[] = [
       'Maintain steady breathing tempo throughout the set.'
     ],
     calories_per_minute_est: 10.5,
+    image_url: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?w=800&auto=format&fit=crop&q=80',
     sdg_alignment_note: 'Dual benefit of core strengthening and aerobic fitness.'
   },
   {
@@ -220,6 +226,7 @@ export const INITIAL_EXERCISES: Exercise[] = [
       'Track your knees over your toes; do not let knees cave inward.'
     ],
     calories_per_minute_est: 6.8,
+    image_url: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&auto=format&fit=crop&q=80',
     sdg_alignment_note: 'Reinforces daily functional mobility, knee, and hip longevity.'
   },
   {
@@ -244,6 +251,7 @@ export const INITIAL_EXERCISES: Exercise[] = [
       'Engage core to protect lumbar spine.'
     ],
     calories_per_minute_est: 11.5,
+    image_url: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80',
     sdg_alignment_note: 'Stimulates bone mineral density through weight-bearing impact.'
   },
   {
@@ -268,6 +276,7 @@ export const INITIAL_EXERCISES: Exercise[] = [
       'Do not let the trailing knee slam into the floor.'
     ],
     calories_per_minute_est: 6.9,
+    image_url: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&auto=format&fit=crop&q=80',
     sdg_alignment_note: 'Corrects left-right muscular imbalances and protects joints.'
   },
   {
@@ -292,6 +301,7 @@ export const INITIAL_EXERCISES: Exercise[] = [
       'Step feet back instead of jumping if you need a lower-impact regression.'
     ],
     calories_per_minute_est: 13.0,
+    image_url: 'https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?w=800&auto=format&fit=crop&q=80',
     sdg_alignment_note: 'Rapidly triggers VO2 max improvement and metabolic efficiency.'
   },
   {
@@ -316,6 +326,7 @@ export const INITIAL_EXERCISES: Exercise[] = [
       'Maintain soft knees upon each landing.'
     ],
     calories_per_minute_est: 8.5,
+    image_url: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&auto=format&fit=crop&q=80',
     sdg_alignment_note: 'Zero-barrier aerobic exercise accessible to all age groups.'
   }
 ];

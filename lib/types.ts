@@ -52,6 +52,8 @@ export interface Exercise {
   instructions: string[];
   form_tips: string[];
   calories_per_minute_est: number;
+  image_url?: string;
+  thumbnail_url?: string;
   sdg_alignment_note?: string;
   created_at?: string;
 }
