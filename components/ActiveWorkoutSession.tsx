@@ -396,7 +396,7 @@ export function ActiveWorkoutSession({
                 <Sparkles className="w-7 h-7" />
               </div>
               <h3 className="text-2xl font-black text-white font-heading">Workout Complete!</h3>
-              <p className="text-xs text-slate-300">Fantastic effort promoting your SDG 3 daily health goal.</p>
+              <p className="text-xs text-slate-300">Fantastic effort promoting your daily health goal.</p>
             </div>
 
             {/* Metrics Breakdown */}

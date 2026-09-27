@@ -6,7 +6,6 @@ import { INITIAL_CATEGORIES, INITIAL_EXERCISES } from '@/lib/mockData';
 import { ExerciseCard } from '@/components/ExerciseCard';
 import { ExerciseDetailModal } from '@/components/ExerciseDetailModal';
 import { ActiveWorkoutSession } from '@/components/ActiveWorkoutSession';
-import { SDG3Banner } from '@/components/SDG3Banner';
 import { 
   Search, 
   Filter, 
@@ -107,7 +106,7 @@ export default function ExercisesPage() {
       <div className="space-y-3">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
           <Dumbbell className="w-3.5 h-3.5" />
-          <span>SDG 3 Equipment-Free Calisthenics Index</span>
+          <span>Equipment-Free Calisthenics Index</span>
         </div>
 
         <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-heading">
@@ -232,10 +231,7 @@ export default function ExercisesPage() {
         </div>
       )}
 
-      {/* SDG 3 Compact Reminder Banner */}
-      <div className="pt-8">
-        <SDG3Banner compact />
-      </div>
+
 
       {/* Modals */}
       <ExerciseDetailModal

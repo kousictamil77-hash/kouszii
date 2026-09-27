@@ -163,7 +163,7 @@ export function OnboardingForm() {
               <span className="font-black text-xl text-emerald-400 font-heading">{dailyCalorieGoal} kcal</span>
             </div>
             <p className="text-[10px] text-slate-500">
-              Aim to burn {dailyCalorieGoal} calories daily through focused workouts to maintain cardiovascular health (SDG 3.4).
+              Aim to burn {dailyCalorieGoal} calories daily through focused workouts to maintain cardiovascular health.
             </p>
           </div>
 

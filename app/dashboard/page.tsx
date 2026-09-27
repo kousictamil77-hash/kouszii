@@ -9,7 +9,6 @@ import { calculateSDG3Metrics, calculateBMI } from '@/lib/calculations';
 import { StatsCard } from '@/components/StatsCard';
 import { ActivityBarChart } from '@/components/Charts/ActivityBarChart';
 import { CategoryDistribution } from '@/components/Charts/CategoryDistribution';
-import { SDG3Banner } from '@/components/SDG3Banner';
 import { 
   Flame, 
   Clock, 
@@ -95,7 +94,7 @@ export default function DashboardPage() {
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold mb-2">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>SDG 3 Health Dashboard</span>
+            <span>Health Dashboard</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-heading">
             Welcome back, {profile.full_name || 'Athlete'}!
@@ -183,16 +182,10 @@ export default function DashboardPage() {
               <HeartHandshake className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">SDG 3 Impact Telemetry</span>
-              <h3 className="text-lg font-bold text-white font-heading">Preventive Health & Eco-Benefits</h3>
+              <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Health & Fitness Telemetry</span>
+              <h3 className="text-lg font-bold text-white font-heading">Preventive Health & Activity Metrics</h3>
             </div>
           </div>
-          <Link
-            href="/sdg3"
-            className="text-xs text-emerald-400 hover:underline font-semibold"
-          >
-            Learn about SDG 3.4 Targets →
-          </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
@@ -312,8 +305,6 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* SDG 3 Banner */}
-      <SDG3Banner />
     </div>
   );
 }

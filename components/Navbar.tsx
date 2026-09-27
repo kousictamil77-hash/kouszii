@@ -25,30 +25,7 @@ export function Navbar() {
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isSupabaseConfigured()) {
-      const supabase = createClient();
-      if (supabase) {
-        supabase.auth.getUser().then(({ data: { user } }) => {
-          if (user?.user_metadata?.full_name) {
-            setUserName(user.user_metadata.full_name);
-          } else if (user?.email) {
-            setUserName(user.email.split('@')[0]);
-          }
-        });
-
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-          if (session?.user?.user_metadata?.full_name) {
-            setUserName(session.user.user_metadata.full_name);
-          } else if (session?.user?.email) {
-            setUserName(session.user.email.split('@')[0]);
-          } else {
-            setUserName(null);
-          }
-        });
-
-        return () => subscription.unsubscribe();
-      }
-    } else {
+    const loadLocalProfile = () => {
       import('@/lib/storage').then(({ LocalStore }) => {
         const profile = LocalStore.getProfile();
         if (profile?.full_name) {
@@ -57,6 +34,39 @@ export function Navbar() {
           setUserName(profile.email.split('@')[0]);
         }
       });
+    };
+
+    if (isSupabaseConfigured()) {
+      const supabase = createClient();
+      if (supabase) {
+        supabase.auth.getUser()
+          .then(({ data: { user } }) => {
+            if (user?.user_metadata?.full_name) {
+              setUserName(user.user_metadata.full_name);
+            } else if (user?.email) {
+              setUserName(user.email.split('@')[0]);
+            } else {
+              loadLocalProfile();
+            }
+          })
+          .catch(() => {
+            loadLocalProfile();
+          });
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+          if (session?.user?.user_metadata?.full_name) {
+            setUserName(session.user.user_metadata.full_name);
+          } else if (session?.user?.email) {
+            setUserName(session.user.email.split('@')[0]);
+          } else {
+            loadLocalProfile();
+          }
+        });
+
+        return () => subscription.unsubscribe();
+      }
+    } else {
+      loadLocalProfile();
     }
   }, []);
 
@@ -81,7 +91,6 @@ export function Navbar() {
     { href: '/exercises', label: 'Exercise Library', icon: Dumbbell },
     { href: '/tracker', label: 'Workout Tracker', icon: Activity },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/sdg3', label: 'SDG 3 Impact', icon: HeartHandshake },
     { href: '/admin', label: 'Admin', icon: ShieldAlert },
   ];
 
@@ -95,7 +104,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-dark-bg/85 backdrop-blur-xl transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
-        {/* Brand Logo & SDG 3 Badge */}
+        {/* Brand Logo */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 group">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-glow-emerald group-hover:scale-105 transition-transform">
@@ -103,7 +112,7 @@ export function Navbar() {
             </div>
             <div>
               <span className="text-lg font-bold tracking-tight text-white flex items-center gap-1.5 font-heading">
-                FitPulse <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-medium">SDG 3</span>
+                FitPulse
               </span>
               <span className="block text-[10px] text-slate-400 -mt-1 tracking-wider uppercase">Smart Fitness</span>
             </div>

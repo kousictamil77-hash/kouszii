@@ -32,72 +32,90 @@ export function AuthForm({ mode }: AuthFormProps) {
     }
 
     if (isSupabaseConfigured()) {
-      const supabase = createClient();
-      if (supabase) {
-        if (mode === 'signup') {
-          const { error, data } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-              data: {
-                full_name: fullName || email.split('@')[0],
+      try {
+        const supabase = createClient();
+        if (supabase) {
+          if (mode === 'signup') {
+            const { error, data } = await supabase.auth.signUp({
+              email,
+              password,
+              options: {
+                data: {
+                  full_name: fullName || email.split('@')[0],
+                },
               },
-            },
-          });
-
-          if (error) {
-            setErrorMsg(error.message);
-            setLoading(false);
-            return;
-          }
-
-          import('@/lib/storage').then(({ LocalStore }) => {
-            const profile = LocalStore.getProfile();
-            LocalStore.saveProfile({
-              ...profile,
-              email: email,
-              full_name: fullName || email.split('@')[0],
-              total_workouts: 0,
-              total_calories_burned: 0,
-              total_active_seconds: 0,
-              current_streak: 0,
-              last_workout_date: null,
             });
-            localStorage.setItem('hw_smart_fitness_logs_v1', JSON.stringify([]));
-          });
 
-          if (data.session) {
-            router.push('/onboarding');
+            if (error) {
+              const isFetchErr = error.message.toLowerCase().includes('failed to fetch') || 
+                                 error.message.toLowerCase().includes('fetch') ||
+                                 error.message.toLowerCase().includes('networkerror');
+              if (!isFetchErr) {
+                setErrorMsg(error.message);
+                setLoading(false);
+                return;
+              }
+              console.warn('Supabase endpoint unreachable during sign up, falling back to local mode.');
+            } else {
+              import('@/lib/storage').then(({ LocalStore }) => {
+                const profile = LocalStore.getProfile();
+                LocalStore.saveProfile({
+                  ...profile,
+                  email: email,
+                  full_name: fullName || email.split('@')[0],
+                  total_workouts: 0,
+                  total_calories_burned: 0,
+                  total_active_seconds: 0,
+                  current_streak: 0,
+                  last_workout_date: null,
+                });
+                localStorage.setItem('hw_smart_fitness_logs_v1', JSON.stringify([]));
+              });
+
+              if (data.session) {
+                router.push('/onboarding');
+              } else {
+                setSuccessMsg('Account created! Please check your email for confirmation or sign in.');
+                setLoading(false);
+              }
+              return;
+            }
           } else {
-            setSuccessMsg('Account created! Please check your email for confirmation or sign in.');
-            setLoading(false);
-          }
-          return;
-        } else {
-          // Login
-          const { error, data } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-
-          if (error) {
-            setErrorMsg(error.message);
-            setLoading(false);
-            return;
-          }
-
-          import('@/lib/storage').then(({ LocalStore }) => {
-            const profile = LocalStore.getProfile();
-            LocalStore.saveProfile({
-              ...profile,
-              email: data.user?.email || email,
-              full_name: data.user?.user_metadata?.full_name || email.split('@')[0],
+            // Login
+            const { error, data } = await supabase.auth.signInWithPassword({
+              email,
+              password,
             });
-          });
 
-          router.push('/dashboard');
-          return;
+            if (error) {
+              const isFetchErr = error.message.toLowerCase().includes('failed to fetch') || 
+                                 error.message.toLowerCase().includes('fetch') ||
+                                 error.message.toLowerCase().includes('networkerror');
+              if (!isFetchErr) {
+                setErrorMsg(error.message === 'Invalid login credentials' 
+                  ? 'Invalid email or password. Please try again or continue as Guest.' 
+                  : error.message);
+                setLoading(false);
+                return;
+              }
+              console.warn('Supabase endpoint unreachable during sign in, falling back to local mode.');
+            } else {
+              import('@/lib/storage').then(({ LocalStore }) => {
+                const profile = LocalStore.getProfile();
+                LocalStore.saveProfile({
+                  ...profile,
+                  email: data.user?.email || email,
+                  full_name: data.user?.user_metadata?.full_name || email.split('@')[0],
+                });
+              });
+
+              router.push('/dashboard');
+              return;
+            }
+          }
         }
+      } catch (err) {
+        console.warn('Supabase auth exception, falling back to local demo mode:', err);
       }
     }
 
@@ -154,7 +172,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       <div className="text-center space-y-2">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
           <Sparkles className="w-3.5 h-3.5" />
-          <span>FitPulse SDG 3 Fitness</span>
+          <span>FitPulse Smart Fitness</span>
         </div>
 
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-heading">

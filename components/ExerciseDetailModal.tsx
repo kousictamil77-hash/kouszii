@@ -156,7 +156,7 @@ export function ExerciseDetailModal({
             <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-800/40 flex items-start gap-3">
               <HeartHandshake className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
               <div>
-                <span className="text-xs font-bold text-emerald-300">SDG 3 Health Impact</span>
+                <span className="text-xs font-bold text-emerald-300">Health Impact</span>
                 <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">{exercise.sdg_alignment_note}</p>
               </div>
             </div>

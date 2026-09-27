@@ -6,7 +6,6 @@ import { INITIAL_EXERCISES } from '@/lib/mockData';
 import { LocalStore } from '@/lib/storage';
 import { ActiveWorkoutSession } from '@/components/ActiveWorkoutSession';
 import { QuickLogModal } from '@/components/QuickLogModal';
-import { SDG3Banner } from '@/components/SDG3Banner';
 import { 
   Play, 
   PlusCircle, 
@@ -17,7 +16,8 @@ import {
   Activity, 
   Sparkles,
   Dumbbell,
-  Target
+  Target,
+  Share2
 } from 'lucide-react';
 import { formatDurationHuman } from '@/lib/calculations';
 
@@ -48,6 +48,18 @@ export default function TrackerPage() {
     } catch {}
     LocalStore.deleteLog(id);
     refreshData();
+  };
+
+  const handleShareLog = (log: ProgressLog) => {
+    try {
+      const dataStr = JSON.stringify(log);
+      const base64 = btoa(dataStr);
+      const url = `${window.location.origin}/share/${encodeURIComponent(base64)}`;
+      navigator.clipboard.writeText(url);
+      setSuccessToast('Shareable link copied to clipboard!');
+    } catch (e) {
+      console.error('Failed to generate share link', e);
+    }
   };
 
   const handleLaunchSession = (exercise: Exercise) => {
@@ -228,7 +240,14 @@ export default function TrackerPage() {
                         minute: '2-digit',
                       })}
                     </td>
-                    <td className="px-5 py-3.5 text-right">
+                    <td className="px-5 py-3.5 text-right flex items-center justify-end gap-1">
+                      <button
+                        onClick={() => handleShareLog(log)}
+                        className="p-1.5 rounded-lg text-slate-500 hover:text-emerald-400 hover:bg-emerald-950/40 transition-colors"
+                        title="Share log"
+                      >
+                        <Share2 className="w-4 h-4" />
+                      </button>
                       <button
                         onClick={() => handleDeleteLog(log.id)}
                         className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-950/40 transition-colors"
@@ -244,9 +263,6 @@ export default function TrackerPage() {
           </div>
         )}
       </div>
-
-      {/* SDG 3 Impact banner */}
-      <SDG3Banner compact />
 
       {/* Active Session Runner Modal */}
       {activeSessionExercise && (
